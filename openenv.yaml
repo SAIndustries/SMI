@@ -1,0 +1,91 @@
+name: smi-watch-env
+description: >
+  RL environment for training LLM agents on silent myocardial infarction (SMI)
+  detection using synthetic wearable sensor streams — PPG, HRV, SpO2, ECG,
+  skin temperature, accelerometer. Four tasks from single-signal detection to
+  longitudinal multi-window temporal tracking. No real patient data used.
+version: "2.0.0"
+author: team
+tags:
+  - openenv
+  - medical
+  - wearables
+  - cardiac
+  - time-series
+  - temporal-reasoning
+
+tasks:
+  - id: single_signal_anomaly
+    difficulty: easy
+    description: >
+      Detect an embedded SMI event in 60s of PPG data.
+      Agent must locate onset second (±5s) and classify severity.
+
+  - id: multi_signal_fusion
+    difficulty: medium
+    description: >
+      Fuse PPG, HRV, SpO2, ECG and skin temperature (with motion artifacts)
+      to determine if SMI is occurring. Explain reasoning citing specific signals.
+
+  - id: multi_patient_triage
+    difficulty: hard
+    description: >
+      Monitor 3 simultaneous patients. Determine triage priority order.
+      Generate a clinical summary justifying escalation decisions.
+
+  - id: longitudinal_monitoring
+    difficulty: hard
+    description: >
+      Track one patient across 5 consecutive 60s windows. SMI onset occurs
+      in window 1–3 and progresses. Agent must identify onset window and
+      describe signal deterioration trajectory across time.
+
+observation_space:
+  patient_id: string
+  task_id: string
+  task_difficulty: string
+  instructions: string
+  window_index: integer
+  ppg: array
+  heart_rate: array
+  hrv_rmssd: array
+  spo2: array
+  skin_temp_c: number
+  accel_magnitude: array
+  ecg_snippet: array
+  patient_age: integer
+  patient_comorbidity: string
+  comorbidity_description: string
+  patient_baseline_hr: number
+  patient_baseline_hrv: number
+  patient_baseline_spo2: number
+  step: integer
+  done: boolean
+  last_action_feedback: string
+  cumulative_reward: number
+  all_patients: array
+
+action_space:
+  action_type: string
+  window_index: integer
+  severity: string
+  confidence: number
+  reasoning: string
+  patient_id: string
+  triage_order: array
+  onset_window: integer
+  trend_notes: string
+
+reward_range: [-1.0, 1.0]
+max_steps: 15
+
+benchmark:
+  endpoint: /benchmark
+  seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  random_baseline: 0.18
+  perfect_baseline: 1.00
+  expected_llm_baseline:
+    single_signal_anomaly: 0.68
+    multi_signal_fusion: 0.51
+    multi_patient_triage: 0.40
+    longitudinal_monitoring: 0.35
