@@ -1,0 +1,18 @@
+name: Sync to HuggingFace Spaces
+on:
+  push:
+    branches: [main]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Push to HuggingFace
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add hf https://SAIndustries:$HF_TOKEN@huggingface.co/spaces/SAIndustries/smi-watch-env-v2
+          git push hf main --force
