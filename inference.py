@@ -14,7 +14,7 @@ import requests
 from openai import OpenAI
 
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
-API_KEY      = os.getenv("HF_TOKEN") or os.getenv("API_KEY", "")
+HF_TOKEN     = os.getenv("HF_TOKEN")
 MODEL_NAME   = os.getenv("MODEL_NAME", "meta-llama/Llama-3.1-8B-Instruct")
 ENV_URL      = os.getenv("ENV_URL",   "http://localhost:7860")
 MAX_STEPS    = 12
@@ -97,7 +97,7 @@ SYSTEM_PROMPT = textwrap.dedent("""
     No markdown, no explanation outside the JSON.
 """).strip()
 
-client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
 
 
 def env_reset(task_id: str, seed: int = 42) -> dict:
